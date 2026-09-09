@@ -1,6 +1,6 @@
 {
     "id": "devcontainer-defaults",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "name": "Devcontainer Defaults",
     "description": "Personal defaults applied to every dev container via dev.containers.defaultFeatures: a per-project /worktrees volume for git worktrees, and a shared volume behind ~/.claude so Claude Code login, settings, and memory persist across containers and rebuilds.",
     "documentationURL": "https://github.com/chrismarinos/devcontainer-defaults/tree/main/src/devcontainer-defaults",
