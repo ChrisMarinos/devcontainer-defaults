@@ -1,9 +1,9 @@
 {
-    "id": "marinos-defaults",
-    "version": "1.0.0",
-    "name": "Marinos Defaults",
+    "id": "devcontainer-defaults",
+    "version": "0.0.1",
+    "name": "Devcontainer Defaults",
     "description": "Personal defaults applied to every dev container via dev.containers.defaultFeatures: a per-project /worktrees volume for git worktrees, and a shared volume behind ~/.claude so Claude Code login, settings, and memory persist across containers and rebuilds.",
-    "documentationURL": "https://github.com/chrismarinos/devcontainer-features/tree/main/src/marinos-defaults",
+    "documentationURL": "https://github.com/chrismarinos/devcontainer-defaults/tree/main/src/devcontainer-defaults",
     "options": {
         "symlinkClaude": {
             "type": "boolean",
@@ -27,7 +27,7 @@
         "WORKTREES_DIR": "/worktrees",
         "CLAUDE_CONFIG_DIR": "/mnt/claude-home"
     },
-    "postStartCommand": "/usr/local/share/marinos-defaults/fix-perms.sh",
+    "postStartCommand": "/usr/local/share/devcontainer-defaults/fix-perms.sh",
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
     ]

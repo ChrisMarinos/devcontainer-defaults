@@ -2,7 +2,7 @@
     "no-symlink": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
-            "marinos-defaults": {
+            "devcontainer-defaults": {
                 "symlinkClaude": false
             }
         }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build-time install for the marinos-defaults feature.
+# Build-time install for the devcontainer-defaults feature.
 #
 # Runs as root while the image is being built, BEFORE any volume is mounted.
 # It prepares the mount points with the right owner so that Docker seeds
@@ -17,9 +17,9 @@ REMOTE_USER_HOME="${_REMOTE_USER_HOME:-/root}"
 # and the values of WORKTREES_DIR / CLAUDE_CONFIG_DIR in containerEnv.
 WORKTREES_DIR=/worktrees
 CLAUDE_HOME=/mnt/claude-home
-SHARE_DIR=/usr/local/share/marinos-defaults
+SHARE_DIR=/usr/local/share/devcontainer-defaults
 
-echo "=== marinos-defaults ==="
+echo "=== devcontainer-defaults ==="
 echo "Remote user:  ${REMOTE_USER} (${REMOTE_USER_HOME})"
 echo "Worktrees:    ${WORKTREES_DIR}"
 echo "Claude home:  ${CLAUDE_HOME} (symlink ~/.claude: ${SYMLINK_CLAUDE})"
@@ -52,7 +52,7 @@ fi
 mkdir -p "${SHARE_DIR}"
 cat > "${SHARE_DIR}/fix-perms.sh" <<EOF
 #!/usr/bin/env bash
-# Installed by the marinos-defaults dev container feature.
+# Installed by the devcontainer-defaults dev container feature.
 set -e
 for dir in "${WORKTREES_DIR}" "${CLAUDE_HOME}"; do
     [ -d "\$dir" ] || continue
@@ -62,11 +62,11 @@ for dir in "${WORKTREES_DIR}" "${CLAUDE_HOME}"; do
         elif command -v sudo >/dev/null 2>&1; then
             sudo chown "${REMOTE_USER}:${REMOTE_USER}" "\$dir"
         else
-            echo "marinos-defaults: cannot chown \$dir (no root, no sudo)" >&2
+            echo "devcontainer-defaults: cannot chown \$dir (no root, no sudo)" >&2
         fi
     fi
 done
 EOF
 chmod 755 "${SHARE_DIR}/fix-perms.sh"
 
-echo "=== marinos-defaults installed ==="
+echo "=== devcontainer-defaults installed ==="
