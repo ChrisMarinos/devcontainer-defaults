@@ -1,0 +1,10 @@
+{
+    "no-symlink": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "marinos-defaults": {
+                "symlinkClaude": false
+            }
+        }
+    }
+}
