@@ -5,7 +5,7 @@ Reference this feature from your **host** VS Code user settings, not from a proj
 ```jsonc
 // settings.json (user scope, on the host)
 "dev.containers.defaultFeatures": {
-    "https://github.com/chrismarinos/devcontainer-features/releases/download/v1.0.0/marinos-defaults.tgz": {}
+    "https://github.com/chrismarinos/devcontainer-features/releases/download/v1.0.0/devcontainer-defaults.tgz": {}
 }
 ```
 
