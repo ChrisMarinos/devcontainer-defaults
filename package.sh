@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Package one feature as the .tgz that a dev container can reference by HTTPS URL.
 #
-# Usage:  ./package.sh <feature-id>            e.g. ./package.sh marinos-defaults
+# Usage:  ./package.sh <feature-id>            e.g. ./package.sh devcontainer-defaults
 # Output: dist/<feature-id>.tgz  (devcontainer-feature.json and install.sh at the archive root)
 #
 # The archive is what you attach to a GitHub Release; see README.md.
