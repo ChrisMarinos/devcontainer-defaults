@@ -9,8 +9,8 @@ check "~/.claude is a symlink"      test -L "$HOME/.claude"
 check "~/.claude resolves to mount" test "$(readlink -f "$HOME/.claude")" = "/mnt/claude-home"
 check "WORKTREES_DIR exported"      test "$WORKTREES_DIR" = "/worktrees"
 check "CLAUDE_CONFIG_DIR exported"  test "$CLAUDE_CONFIG_DIR" = "/mnt/claude-home"
-check "fix-perms installed"         test -x /usr/local/share/marinos-defaults/fix-perms.sh
-check "fix-perms runs"              /usr/local/share/marinos-defaults/fix-perms.sh
+check "fix-perms installed"         test -x /usr/local/share/devcontainer-defaults/fix-perms.sh
+check "fix-perms runs"              /usr/local/share/devcontainer-defaults/fix-perms.sh
 check "worktrees writable"          sh -c 'touch /worktrees/.probe && rm /worktrees/.probe'
 check "claude home writable"        sh -c 'touch /mnt/claude-home/.probe && rm /mnt/claude-home/.probe'
 
