@@ -49,7 +49,7 @@ if [ -z "${SSH_AUTH_SOCK:-}" ] || [ ! -S "${SSH_AUTH_SOCK}" ]; then
     if [ -S /run/host-services/ssh-auth.sock ]; then
         export SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
     else
-        _sock=$(ls -t /tmp/vscode-ssh-auth-*.sock 2>/dev/null | head -1)
+        _sock=$(find /tmp -maxdepth 1 -type s -name 'vscode-ssh-auth-*.sock' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
         [ -n "$_sock" ] && export SSH_AUTH_SOCK="$_sock"
         unset _sock
     fi
@@ -57,7 +57,7 @@ fi
 
 # Docker credential helper installed by Dev Containers needs the VS Code IPC socket.
 if [ -z "${REMOTE_CONTAINERS_IPC:-}" ] || [ ! -S "${REMOTE_CONTAINERS_IPC}" ]; then
-    _ipc=$(ls -t /tmp/vscode-remote-containers-ipc-*.sock 2>/dev/null | head -1)
+    _ipc=$(find /tmp -maxdepth 1 -type s -name 'vscode-remote-containers-ipc-*.sock' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
     [ -n "$_ipc" ] && export REMOTE_CONTAINERS_IPC="$_ipc"
     unset _ipc
 fi
