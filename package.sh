@@ -8,9 +8,15 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
+usage() {
+  local ids=()
+  for d in src/*/; do ids+=("$(basename "$d")"); done
+  echo "usage: package.sh <feature-id>   (one of: ${ids[*]})" >&2
+  exit 1
+}
+
 id="${1:-}"
-[ -n "$id" ] && [ -f "src/$id/devcontainer-feature.json" ] \
-  || { echo "usage: package.sh <feature-id>   (one of: $(ls src | tr '\n' ' '))" >&2; exit 1; }
+[ -n "$id" ] && [ -f "src/$id/devcontainer-feature.json" ] || usage
 
 version="$(jq -r .version "src/$id/devcontainer-feature.json")"
 mkdir -p dist

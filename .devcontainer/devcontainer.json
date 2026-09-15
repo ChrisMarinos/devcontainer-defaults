@@ -1,0 +1,35 @@
+{
+    "name": "devcontainer-features",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false,
+            "installDockerBuildx": true,
+            "installDockerComposeSwitch": true,
+            "version": "latest",
+            "dockerDashComposeVersion": "v2"
+        },
+        "ghcr.io/devcontainers-extra/features/devcontainers-cli:1": {},
+        "ghcr.io/devcontainers-extra/features/shellcheck:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "timonwong.shellcheck",
+                "mads-hartmann.bash-ide-vscode",
+                "redhat.vscode-yaml"
+            ],
+            "settings": {
+                "shellcheck.customArgs": ["-x"],
+                "files.associations": {
+                    "devcontainer-feature.json": "jsonc"
+                }
+            }
+        }
+    },
+    "postCreateCommand": "shellcheck src/*/install.sh package.sh && echo 'shellcheck ok' || true",
+    "remoteEnv": {
+        "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+    }
+}
