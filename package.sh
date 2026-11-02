@@ -2,7 +2,9 @@
 # Package one feature as the .tgz that a dev container can reference by HTTPS URL.
 #
 # Usage:  ./package.sh <feature-id>            e.g. ./package.sh devcontainer-defaults
-# Output: dist/<feature-id>.tgz  (devcontainer-feature.json and install.sh at the archive root)
+# Output: dist/devcontainer-feature-<feature-id>.tgz  (devcontainer-feature.json and
+#         install.sh at the archive root). The spec requires this exact filename for a
+#         Feature referenced by a direct HTTPS tarball URI.
 #
 # The archive is what you attach to a GitHub Release; see README.md.
 set -euo pipefail
@@ -20,6 +22,6 @@ id="${1:-}"
 
 version="$(jq -r .version "src/$id/devcontainer-feature.json")"
 mkdir -p dist
-tar czf "dist/$id.tgz" -C "src/$id" .
-echo "dist/$id.tgz  (version $version)"
-tar tzf "dist/$id.tgz" | sed 's/^/  /'
+tar czf "dist/devcontainer-feature-$id.tgz" -C "src/$id" .
+echo "dist/devcontainer-feature-$id.tgz  (version $version)"
+tar tzf "dist/devcontainer-feature-$id.tgz" | sed 's/^/  /'

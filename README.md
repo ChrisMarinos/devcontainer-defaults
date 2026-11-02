@@ -24,13 +24,13 @@ Rebuild a container and the feature is layered on top of the project's own `devc
 2. Test locally (needs Docker):
    ```bash
    npm install -g @devcontainers/cli
-   devcontainer features test -f marinos-defaults -i mcr.microsoft.com/devcontainers/base:ubuntu .
+   devcontainer features test -f devcontainer-defaults -i mcr.microsoft.com/devcontainers/base:ubuntu .
    ```
 3. Package and release from the host:
    ```bash
-   ./package.sh marinos-defaults
+   ./package.sh devcontainer-defaults
    git tag v1.0.0 && git push --tags
-   gh release create v1.0.0 dist/marinos-defaults.tgz --title v1.0.0 --notes "..."
+   gh release create v1.0.0 dist/devcontainer-defaults.tgz --title v1.0.0 --notes "..."
    ```
 4. Update the URL in your host `settings.json` to the new tag.
 
