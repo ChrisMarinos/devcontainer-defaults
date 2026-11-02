@@ -10,6 +10,7 @@
 set -e
 
 SYMLINK_CLAUDE="${SYMLINKCLAUDE:-true}"
+INSTALL_HERDR_OPEN="${INSTALLHERDROPEN:-true}"
 REMOTE_USER="${_REMOTE_USER:-root}"
 REMOTE_USER_HOME="${_REMOTE_USER_HOME:-/root}"
 
@@ -17,12 +18,15 @@ REMOTE_USER_HOME="${_REMOTE_USER_HOME:-/root}"
 # and the values of WORKTREES_DIR / CLAUDE_CONFIG_DIR in containerEnv.
 WORKTREES_DIR=/worktrees
 CLAUDE_HOME=/mnt/claude-home
+CLAUDE_SYS_DIR=/etc/claude-code
 SHARE_DIR=/usr/local/share/devcontainer-defaults
+LINK_DIR=/tmp/devcontainer-defaults
 
 echo "=== devcontainer-defaults ==="
 echo "Remote user:  ${REMOTE_USER} (${REMOTE_USER_HOME})"
 echo "Worktrees:    ${WORKTREES_DIR}"
 echo "Claude home:  ${CLAUDE_HOME} (symlink ~/.claude: ${SYMLINK_CLAUDE})"
+echo "herdr-open:   ${INSTALL_HERDR_OPEN}"
 
 # --- Mount points, owned by the remote user so new volumes inherit it ---
 mkdir -p "${WORKTREES_DIR}" "${CLAUDE_HOME}"
@@ -44,22 +48,35 @@ if [ "${SYMLINK_CLAUDE}" = "true" ]; then
     echo "Symlinked ${CLAUDE_DIR} -> ${CLAUDE_HOME}"
 fi
 
-#1password ssh config
-if [ -z "${SSH_AUTH_SOCK:-}" ] || [ ! -S "${SSH_AUTH_SOCK}" ]; then
-    if [ -S /run/host-services/ssh-auth.sock ]; then
-        export SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
-    else
-        _sock=$(find /tmp -maxdepth 1 -type s -name 'vscode-ssh-auth-*.sock' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
-        [ -n "$_sock" ] && export SSH_AUTH_SOCK="$_sock"
-        unset _sock
-    fi
-fi
+# --- Host socket links, run by postStart and postAttach ---
+# The forwarded SSH and credential-helper sockets have per-session UUIDs in
+# their names, so containerEnv points at stable paths under ${LINK_DIR} and
+# the runtime script links those to whatever sockets actually exist.
+mkdir -p "${SHARE_DIR}" "${LINK_DIR}"
+chmod 1777 "${LINK_DIR}"
+install -m 755 "$(dirname "$0")/link-host-sockets.sh" "${SHARE_DIR}/link-host-sockets.sh"
 
-# Docker credential helper installed by Dev Containers needs the VS Code IPC socket.
-if [ -z "${REMOTE_CONTAINERS_IPC:-}" ] || [ ! -S "${REMOTE_CONTAINERS_IPC}" ]; then
-    _ipc=$(find /tmp -maxdepth 1 -type s -name 'vscode-remote-containers-ipc-*.sock' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
-    [ -n "$_ipc" ] && export REMOTE_CONTAINERS_IPC="$_ipc"
-    unset _ipc
+# --- herdr-open ---
+# The skill and allowlist entry go under Claude Code's system directory rather
+# than ~/.claude because that one is a volume, not mounted yet at build time.
+if [ "${INSTALL_HERDR_OPEN}" = "true" ]; then
+    install -D -m 755 "$(dirname "$0")/herdr-open.sh" /usr/local/bin/herdr-open.sh
+
+    mkdir -p "${CLAUDE_SYS_DIR}/managed-settings.d" "${CLAUDE_SYS_DIR}/.claude/skills"
+    cp -r "$(dirname "$0")/skills/." "${CLAUDE_SYS_DIR}/.claude/skills/"
+
+    cat > "${CLAUDE_SYS_DIR}/managed-settings.d/50-devcontainer-defaults.json" <<'EOF'
+{
+  "permissions": {
+    "allow": [
+      "Bash(herdr-open.sh:*)"
+    ]
+  }
+}
+EOF
+
+    chmod -R a+rX "${CLAUDE_SYS_DIR}"
+    echo "Installed herdr-open.sh, its skill, and its allowlist entry"
 fi
 
 # --- Runtime ownership fix, run by postStartCommand ---
@@ -86,5 +103,8 @@ for dir in "${WORKTREES_DIR}" "${CLAUDE_HOME}"; do
 done
 EOF
 chmod 755 "${SHARE_DIR}/fix-perms.sh"
+
+#install claude code
+curl -fsSL https://claude.ai/install.sh | bash
 
 echo "=== devcontainer-defaults installed ==="

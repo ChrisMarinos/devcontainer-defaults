@@ -1,6 +1,6 @@
 {
     "id": "devcontainer-defaults",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "name": "Devcontainer Defaults",
     "description": "Personal defaults applied to every dev container via dev.containers.defaultFeatures: a per-project /worktrees volume for git worktrees, and a shared volume behind ~/.claude so Claude Code login, settings, and memory persist across containers and rebuilds.",
     "documentationURL": "https://github.com/chrismarinos/devcontainer-defaults/tree/main/src/devcontainer-defaults",
@@ -9,6 +9,11 @@
             "type": "boolean",
             "default": true,
             "description": "Symlink the remote user's ~/.claude to the shared claude-home volume."
+        },
+        "installHerdrOpen": {
+            "type": "boolean",
+            "default": true,
+            "description": "Install herdr-open.sh, which opens a container file in a new Herdr tab, plus its Claude Code skill and allowlist entry. Inert outside a Herdr-managed container."
         }
     },
     "mounts": [
@@ -21,8 +26,8 @@
             "source": "devcontainer-claude-home",
             "target": "/mnt/claude-home",
             "type": "volume"
-	},
-	{
+        },
+        {
             "source": "/run/host-services/ssh-auth.sock",
             "target": "/run/host-services/ssh-auth.sock",
             "type": "bind"
@@ -30,9 +35,12 @@
     ],
     "containerEnv": {
         "WORKTREES_DIR": "/worktrees",
-        "CLAUDE_CONFIG_DIR": "/mnt/claude-home"
+        "CLAUDE_CONFIG_DIR": "/mnt/claude-home",
+        "SSH_AUTH_SOCK": "/tmp/devcontainer-defaults/ssh-auth.sock",
+        "REMOTE_CONTAINERS_IPC": "/tmp/devcontainer-defaults/remote-containers-ipc.sock"
     },
-    "postStartCommand": "/usr/local/share/devcontainer-defaults/fix-perms.sh",
+    "postStartCommand": "/usr/local/share/devcontainer-defaults/fix-perms.sh && /usr/local/share/devcontainer-defaults/link-host-sockets.sh",
+    "postAttachCommand": "/usr/local/share/devcontainer-defaults/link-host-sockets.sh",
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
     ]
